@@ -22,38 +22,48 @@
 #include "vrambuf.h"
 //#link "vrambuf.c"
 
+
+#include "game.h"
+
+
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
-  0x03,			// screen color
+  0x0F,			// screen color
 
-  0x11,0x30,0x27,0x0,	// background palette 0
-  0x1c,0x20,0x2c,0x0,	// background palette 1
-  0x00,0x10,0x20,0x0,	// background palette 2
-  0x06,0x16,0x26,0x0,   // background palette 3
+  0x11,0x30,0x27,0x00,	// background palette 0
+  0x1C,0x20,0x2C,0x00,	// background palette 1
+  0x00,0x10,0x20,0x00,	// background palette 2
+  0x06,0x16,0x26,0x00,   // background palette 3
 
-  0x16,0x35,0x24,0x0,	// sprite palette 0
-  0x00,0x37,0x25,0x0,	// sprite palette 1
-  0x0d,0x2d,0x3a,0x0,	// sprite palette 2
-  0x0d,0x27,0x2a	// sprite palette 3
+  0x16,0x35,0x24,0x00,	// sprite palette 0
+  0x1D,0x2D,0x16,0x00,	// sprite palette 1
+  0x0D,0x2D,0x02,0x00,	// sprite palette 2
+  0x0D,0x27,0x2A	// sprite palette 3
 };
 
 // setup PPU and tables
-void setup_graphics() {
+void setup_graphics(void) {
   // clear sprites
   oam_clear();
   // set palette colors
   pal_all(PALETTE);
 }
 
+void game(void)
+{
+  start();
+  
+  while(1)
+  {
+    update();
+  }
+}
+
 void main(void)
 {
   setup_graphics();
-  // draw message  
-  vram_adr(NTADR_A(2,2));
-  vram_write("HELLO, WORLD!", 12);
   // enable rendering
   ppu_on_all();
-  // infinite loop
-  while(1) {
-  }
+  
+  game();
 }
