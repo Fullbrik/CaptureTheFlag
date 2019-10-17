@@ -3,8 +3,8 @@
 .segment "CHARS"
 .byte $00,$00,$00,$00,$00,$00,$00,$00
 .byte $00,$00,$00,$00,$00,$00,$00,$00
-.byte $C9,$C8,$C9,$C9,$F9,$C9,$C9,$C9
-.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte $FF,$81,$BD,$BD,$BD,$BD,$81,$FF
+.byte $00,$7E,$5E,$76,$6E,$7A,$7E,$00
 .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 .byte $00,$00,$00,$00,$00,$00,$00,$00
 .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
