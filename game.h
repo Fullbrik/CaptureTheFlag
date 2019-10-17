@@ -1,5 +1,5 @@
-#define P1StartX 0x00
-#define P1StartY 0x00
+#define P1StartX 0x10
+#define P1StartY 0x10
 
 #define P2StartX 0x00
 #define P2StartY 0x00
@@ -28,11 +28,14 @@ void update(void)
   if(gamepad&PAD_UP) --p1y;
   if(gamepad&PAD_DOWN) ++p1y;
   
+  if(gamepad&PAD_RIGHT) ++p1x;
+  if(gamepad&PAD_LEFT) --p1x;
+  
   ppu_wait_frame();
   
   oam_off = 0x00;
   
-  oam_off = oam_spr(p1x, p1y, 0x80, 0x01, oam_off);
+  oam_off = oam_spr(p1x, p1y, 0xb0, 0x01, oam_off);
   
   if(oam_off != 0) oam_hide_rest(oam_off);
 }
