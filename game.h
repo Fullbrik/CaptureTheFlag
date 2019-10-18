@@ -172,7 +172,7 @@ void update(void)
   
   
   //Render player 2
-  oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x02, oam_off);
+  oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x42, oam_off);
   //Render his gun
   oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x00, oam_off);
   
