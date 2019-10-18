@@ -58,6 +58,20 @@ void game(void)
   
   while(1)
   {
+    if(GameState&P1_CAPD)
+    {
+      update();
+      ppu_wait_frame();
+      break;
+    }
+    
+    if(GameState&P2_CAPD)
+    {
+      update();
+      ppu_wait_frame();
+      break;
+    }
+    
     update();
   }
 }
@@ -71,4 +85,6 @@ void main(void)
   ppu_on_all();
   
   game();
+  
+  while(1);
 }

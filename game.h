@@ -2,8 +2,8 @@
 #define P1StartX 1
 #define P1StartY 1
 
-#define P2StartX 1
-#define P2StartY 1
+#define P2StartX 17
+#define P2StartY 17
 
 //Player variables
 
@@ -11,19 +11,19 @@
 #define DRAWX(x) ((x + 1) * 8)
 #define DRAWY(y) (DRAWX(y) - 1)
 
-//All bools needed for game. 4 Bytes for each player Bytes go: Shot projectile, Picked up flag, Died, {TBD}.
+//All bools needed for game. 4 Bytes for each player Bytes go: Shot projectile, Picked up flag, Died, Won the game.
 byte GameState;
 
 //Macros to help with game state
 #define P1_SHOT 0x01
 #define P1_FLAG 0x02
 #define P1_DIED 0x04
-#define P1__TBT 0x08
+#define P1_CAPD 0x08
 
 #define P2_SHOT 0x10
 #define P2_FLAG 0x20
 #define P2_DIED 0x40
-#define P2__TBT 0x80
+#define P2_CAPD 0x80
 
 //Easy setting of value
 #define SETGAMESTATETRUE(state) GameState = GameState|state
@@ -63,9 +63,22 @@ byte p2gun;
 byte p2x_proj;
 byte p2y_proj;
 
+//Flags
+const byte p1x_flag = 1;
+const byte p1y_flag = 9;
+
+const byte p2x_flag = 17;
+const byte p2y_flag = 9;
+
 
 //byte representing the current frame
 byte currentFrame;
+
+//byte representing how much time the player should be dead for
+const byte RespawnTime = 120;
+
+//byte representing how much time the player has been dead for
+byte respawnCountdown;
 
 //The gamepad
 byte gamepad;
@@ -81,9 +94,14 @@ const byte GunProjectileSprites[] =
   0x00, 0xb9
 };
 
+const byte GunDamages[] =
+{
+  0, 1
+};
+
 //Map constants
 #define MapCount 2
-#define MapXSize 10
+#define MapXSize 19
 #define MapYSize 19
 
 //All the maps
@@ -91,6 +109,15 @@ const byte Maps[MapCount][MapXSize][MapYSize] =
 {
   {
     { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
     { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
     { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
     { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
@@ -140,6 +167,9 @@ void DoDamageToP1(byte damage)
     p1hp = 0;
     
     SETGAMESTATETRUE(P1_DIED);
+    SETGAMESTATEFALSE(P1_FLAG);
+    
+    respawnCountdown = 0;
   }
 }
 
@@ -153,6 +183,9 @@ void DoDamageToP2(byte damage)
     p2hp = 0;
     
     SETGAMESTATETRUE(P2_DIED);
+    SETGAMESTATEFALSE(P2_FLAG);
+    
+    respawnCountdown = 0;
   }
 }
 
@@ -208,25 +241,37 @@ void update(void)
   //Render right when vblank starts
   oam_off = 0x00;
   
+  if(!(GameState&P1_DIED))
+  {
+    //Render player 1
+    oam_off = oam_spr(DRAWX(p1x), DRAWY(p1y), 0xb0, 0x01, oam_off);
   
-  //Render player 1
-  oam_off = oam_spr(DRAWX(p1x), DRAWY(p1y), 0xb0, 0x01, oam_off);
-  
-  //Render his gun
-  oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
+    //Render his gun
+    oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
+  }
   
   //Render his projectile if needed
   if(GameState&P1_SHOT) oam_off = oam_spr(DRAWX(p1x_proj), DRAWY(p1y_proj), GunProjectileSprites[p1gun], 0x00, oam_off);
   
+  //Render his flag if it is not picked up
+  if(!(GameState&P2_FLAG)) oam_off = oam_spr(DRAWX(p1x_flag), DRAWY(p1y_flag), 0xbb, 0x01, oam_off);
   
-  //Render player 2
-  oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x42, oam_off);
   
-  //Render his gun
-  oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
+  if(!(GameState&P2_DIED))
+  {
+    //Render player 2
+    oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x42, oam_off);
+  
+    //Render his gun
+    oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
+  }
   
   //Render his projectile if needed
   if(GameState&P2_SHOT) oam_off = oam_spr(DRAWX(p2x_proj), DRAWY(p2y_proj), GunProjectileSprites[p2gun], 0x40, oam_off);
+  
+  //Render his flag if it is not picked up
+  if(!(GameState&P1_FLAG)) oam_off = oam_spr(DRAWX(p2x_flag), DRAWY(p2y_flag), 0xbb, 0x02, oam_off);
+  
   
   
   
@@ -256,12 +301,21 @@ void update(void)
   //p1 input
   if(GameState&P1_DIED)
   {
+    ++respawnCountdown;
+    
+    if(respawnCountdown > RespawnTime)
+    {
+      p1x = P1StartX;
+      p1y = P1StartY;
+      
+      SETGAMESTATEFALSE(P1_DIED);
+    }
   }
   else
   {
     gamepad = pad_poll(0);
   
-    if(gamepad&PAD_A && p1gun && !GameState&P1_SHOT)
+    if(gamepad&PAD_A && p1gun && !(GameState&P1_SHOT))
     {
       p1x_proj = p1x + 2;
       p1y_proj = p1y;
@@ -292,6 +346,22 @@ void update(void)
       if(gamepad&PAD_RIGHT && !COLLIDING(p1x + 1, p1y)) ++p1x;
   
       if(gamepad&PAD_LEFT && !COLLIDING(p1x - 1, p1y)) --p1x;
+      
+      if(GameState&P1_FLAG)
+      {
+        if(p1x == p1x_flag && p1y == p1y_flag)
+        {
+          SETGAMESTATEFALSE(P1_FLAG);
+          SETGAMESTATETRUE(P1_CAPD);
+        }
+      }
+      else
+      {
+        if(p1x == p2x_flag && p1y == p2y_flag)
+        {
+          SETGAMESTATETRUE(P1_FLAG);
+        }
+      }
     }
   }
   
@@ -302,7 +372,15 @@ void update(void)
   //p2 input
   if(GameState&P2_DIED)
   {
+    ++respawnCountdown;
     
+    if(respawnCountdown > RespawnTime)
+    {
+      p2x = P2StartX;
+      p2y = P2StartY;
+      
+      SETGAMESTATEFALSE(P2_DIED);
+    }
   }
   else
   {
@@ -338,6 +416,22 @@ void update(void)
   
       if(gamepad&PAD_RIGHT && !COLLIDING(p2x + 1, p2y)) ++p2x;
       if(gamepad&PAD_LEFT && !COLLIDING(p2x - 1, p2y)) --p2x;
+      
+      if(GameState&P2_FLAG)
+      {
+        if(p2x == p2x_flag && p2y == p2y_flag)
+        {
+          SETGAMESTATEFALSE(P2_FLAG);
+          SETGAMESTATETRUE(P2_CAPD);
+        }
+      }
+      else
+      {
+        if(p2x == p1x_flag && p2y == p1y_flag)
+        {
+          SETGAMESTATETRUE(P2_FLAG);
+        }
+      }
     }
   }
   
@@ -361,6 +455,8 @@ void update(void)
       else if(p1x_proj == p2x && p1y_proj == p2y)
       {
         SETGAMESTATEFALSE(P1_SHOT);
+        
+        DoDamageToP2(GunDamages[p1gun]);
       }
       else
       {
@@ -378,7 +474,9 @@ void update(void)
       }
       else if(p2x_proj == p1x && p2y_proj == p1y)
       {
-        SETGAMESTATEFALSE(P1_SHOT);
+        SETGAMESTATEFALSE(P2_SHOT);
+        
+        DoDamageToP1(GunDamages[p2gun]);
       }
       else
       {
