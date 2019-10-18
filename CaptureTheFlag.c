@@ -29,6 +29,10 @@
 #include "game.h"
 
 
+#include "WinScreen.h"
+
+
+
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
   0x00,			// screen color
@@ -84,7 +88,9 @@ void main(void)
   // enable rendering
   ppu_on_all();
   
-  game();
+  //game();
+  
+  WinScreen();
   
   while(1);
 }
