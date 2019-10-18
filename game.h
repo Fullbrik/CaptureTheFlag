@@ -164,6 +164,7 @@ void update(void)
   
   //Render player 1
   oam_off = oam_spr(DRAWX(p1x), DRAWY(p1y), 0xb0, 0x01, oam_off);
+  
   //Render his gun
   oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
   
@@ -173,8 +174,14 @@ void update(void)
   
   //Render player 2
   oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x42, oam_off);
+  
   //Render his gun
-  oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x00, oam_off);
+  oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
+  
+  //Render his projectile if needed
+  if(GameState&P2_SHOT) oam_off = oam_spr(DRAWX(p2x_proj), DRAWY(p2y_proj), GunProjectileSprites[p2gun], 0x40, oam_off);
+  
+  
   
   if(oam_off != 0) oam_hide_rest(oam_off);
   
