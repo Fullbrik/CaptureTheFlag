@@ -22,6 +22,9 @@
 #include "vrambuf.h"
 //#link "vrambuf.c"
 
+#include "apu.h"
+//#link "apu.c"
+
 
 #include "game.h"
 
@@ -61,6 +64,8 @@ void game(void)
 
 void main(void)
 {
+  apu_init();
+  
   setup_graphics();
   // enable rendering
   ppu_on_all();

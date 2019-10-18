@@ -291,7 +291,7 @@ void update(void)
   
   gamepad = pad_poll(1);
   
-  if(gamepad&PAD_A && p2gun && !GameState&P2_SHOT)
+  if(gamepad&PAD_A && p2gun && !((GameState&P2_SHOT) >> 4))
   {
     p2x_proj = p2x - 2;
     p2y_proj = p2y;
