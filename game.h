@@ -32,7 +32,7 @@ byte GameState;
 //p1
 //health
 const byte p1maxHP = 1;
-byte p1hp;
+sbyte p1hp;
 
 //location
 byte p1x;
@@ -50,7 +50,7 @@ byte p1y_proj;
 //p2
 //health
 const byte p2maxHP = 1;
-byte p2hp;
+sbyte p2hp;
 
 //location
 byte p2x;
@@ -132,34 +132,27 @@ byte j;
 void DoDamageToP1(byte damage)
 {
   //Put the damage in one of the temp variables
-  i = p1hp - damage;
+  p1hp -= damage;
   
-  if(i > p1maxHP || i == 0)
+  
+  if(p1hp <= 0)
   {
     p1hp = 0;
     
     SETGAMESTATETRUE(P1_DIED);
-  }
-  else
-  {
-    p1hp = i;
   }
 }
 
 void DoDamageToP2(byte damage)
 {
   //Put the damage in one of the temp variables
-  i = p2hp - damage;
+  p2hp -= damage;
   
-  if(i > p2maxHP || i == 0)
+  if(p2hp <= 0)
   {
     p2hp = 0;
     
     SETGAMESTATETRUE(P2_DIED);
-  }
-  else
-  {
-    p2hp = i;
   }
 }
 
@@ -241,92 +234,119 @@ void update(void)
   
   
   
+  
+  
+  
+  
+  
+  
   //Incrament the current frame to see what frame we are on
   ++currentFrame;
   
   
+  
+  
+  
+  
+  
+  
+  
+  
   /*Input*/
-  
   //p1 input
-  if(GameState&P1_DIED) goto p2input;
-  gamepad = pad_poll(0);
-  
-  if(gamepad&PAD_A && p1gun && !GameState&P1_SHOT)
+  if(GameState&P1_DIED)
   {
-    p1x_proj = p1x + 2;
-    p1y_proj = p1y;
-    
-    SETGAMESTATETRUE(P1_SHOT);
   }
-  
-  if(currentFrame == 3 || currentFrame == 6)
+  else
   {
-    //Do a Mele attack if we are close enough
-    if(gamepad&PAD_B)
+    gamepad = pad_poll(0);
+  
+    if(gamepad&PAD_A && p1gun && !GameState&P1_SHOT)
     {
-      //Make sure the opponent is in front of us
-      if(p2y == p1y && p2x == p1x + 1)
+      p1x_proj = p1x + 2;
+      p1y_proj = p1y;
+    
+      SETGAMESTATETRUE(P1_SHOT);
+    }
+  
+    if(currentFrame == 3 || currentFrame == 6)
+    {
+      //Do a Mele attack if we are close enough
+      if(gamepad&PAD_B)
       {
-        DoDamageToP2(1);
+        //Make sure the opponent is in front of us
+        if(p2y == p1y && p2x == p1x + 1)
+        {
+          DoDamageToP2(1);
+        }
       }
+    }
+  
+    //We will only move every 6 frames, this way we slow down movement
+    if(currentFrame == 6)
+    {
+      //Move p1
+      if(gamepad&PAD_UP && !COLLIDING(p1x, p1y - 1)) --p1y;
+      if(gamepad&PAD_DOWN && !COLLIDING(p1x, p1y + 1)) ++p1y;
+  
+      if(gamepad&PAD_RIGHT && !COLLIDING(p1x + 1, p1y)) ++p1x;
+  
+      if(gamepad&PAD_LEFT && !COLLIDING(p1x - 1, p1y)) --p1x;
     }
   }
   
-  //We will only move every 6 frames, this way we slow down movement
-  if(currentFrame == 6)
-  {
-    //Move p1
-    if(gamepad&PAD_UP && !COLLIDING(p1x, p1y - 1)) --p1y;
-    if(gamepad&PAD_DOWN && !COLLIDING(p1x, p1y + 1)) ++p1y;
   
-    if(gamepad&PAD_RIGHT && !COLLIDING(p1x + 1, p1y)) ++p1x;
-  
-    if(gamepad&PAD_LEFT && !COLLIDING(p1x - 1, p1y)) --p1x;
-  }
+
   
   
   //p2 input
-  p2input:
-  if(GameState&P2_DIED) goto projectile;
-  
-  gamepad = pad_poll(1);
-  
-  if(gamepad&PAD_A && p2gun && !((GameState&P2_SHOT) >> 4))
+  if(GameState&P2_DIED)
   {
-    p2x_proj = p2x - 2;
-    p2y_proj = p2y;
     
-    SETGAMESTATETRUE(P2_SHOT);
   }
-  
-  if(currentFrame == 3 || currentFrame == 6)
+  else
   {
-    //Do a Mele attack if we are close enough
-    if(gamepad&PAD_B)
+    gamepad = pad_poll(1);
+  
+    if(gamepad&PAD_A && p2gun && !((GameState&P2_SHOT) >> 4))
     {
-      //Make sure the opponent is in front of us
-      if(p1y == p2y && p1x == p2x + 1)
+      p2x_proj = p2x - 2;
+      p2y_proj = p2y;
+    
+      SETGAMESTATETRUE(P2_SHOT);
+    }
+  
+    if(currentFrame == 3 || currentFrame == 6)
+    {
+      //Do a Mele attack if we are close enough
+      if(gamepad&PAD_B)
       {
-        DoDamageToP1(1);
+        //Make sure the opponent is in front of us
+        if(p1y == p2y && p1x == p2x - 1)
+        {
+          DoDamageToP1(1);
+        }
       }
+    }
+  
+    //We will only move every 6 frames, this way we slow down movement
+    if(currentFrame == 6)
+    {
+      //Move p2
+      if(gamepad&PAD_UP && !COLLIDING(p2x, p2y - 1)) --p2y;
+      if(gamepad&PAD_DOWN && !COLLIDING(p2x, p2y + 1)) ++p2y;
+  
+      if(gamepad&PAD_RIGHT && !COLLIDING(p2x + 1, p2y)) ++p2x;
+      if(gamepad&PAD_LEFT && !COLLIDING(p2x - 1, p2y)) --p2x;
     }
   }
   
-  //We will only move every 6 frames, this way we slow down movement
-  if(currentFrame == 6)
-  {
-    //Move p2
-    if(gamepad&PAD_UP && !COLLIDING(p2x, p2y - 1)) --p2y;
-    if(gamepad&PAD_DOWN && !COLLIDING(p2x, p2y + 1)) ++p2y;
   
-    if(gamepad&PAD_RIGHT && !COLLIDING(p2x + 1, p2y)) ++p2x;
   
-    if(gamepad&PAD_LEFT && !COLLIDING(p2x - 1, p2y)) --p2x;
-  }
+  
+  
   
   /*Move the projectiles*/
-  projectile:
-  
   if(currentFrame == 5)
   {
     
