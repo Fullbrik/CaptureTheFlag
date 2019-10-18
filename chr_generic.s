@@ -355,8 +355,8 @@
 .byte $3C,$42,$81,$81,$81,$81,$42,$3C
 .byte $7C,$FE,$F8,$F0,$F0,$F8,$FE,$7C
 .byte $00,$78,$76,$6F,$6F,$76,$78,$00
-.byte $00,$00,$00,$00,$00,$00,$00,$00
-.byte $00,$00,$00,$00,$00,$00,$00,$00
+.byte $FF,$FF,$FF,$FF,$C0,$C0,$C0,$C0
+.byte $3F,$3F,$3F,$3F,$00,$00,$00,$00
 .byte $00,$FF,$00,$FF,$00,$FF,$00,$FF
 .byte $55,$AA,$55,$AA,$55,$AA,$55,$AA
 .byte $24,$00,$5A,$00,$24,$00,$18,$00
@@ -395,14 +395,14 @@
 .byte $FF,$FE,$FF,$FE,$FE,$FF,$FE,$A4
 ;/* use block comment to map a subset of data to sprite bitmaps */
 ;/*{w:16,h:16,bpp:1,count:15,brev:1,np:2,pofs:8,remap:[5,0,1,2,4,6,7,8,9,10,11,12]}*/
-.byte $00,$0F,$3F,$3F,$7F,$00,$7F,$7F
-.byte $0F,$30,$4D,$6D,$AD,$FF,$80,$AD
-.byte $7F,$7F,$7F,$00,$7F,$7F,$7F,$00
-.byte $AD,$AD,$AD,$FF,$80,$AD,$AD,$FF
+.byte $00,$0F,$3F,$3F,$7F,$00,$7F,$7B
+.byte $0F,$30,$4D,$6D,$AD,$FF,$80,$A9
+.byte $7B,$47,$6F,$00,$7F,$5F,$0F,$00
+.byte $A9,$85,$AD,$FF,$80,$8D,$0D,$01
 .byte $00,$F0,$FC,$FC,$FE,$00,$FE,$FE
 .byte $F0,$0C,$B2,$B6,$B7,$FF,$01,$B7
 .byte $EA,$E2,$FE,$00,$FE,$FE,$FE,$00
-.byte $B5,$BD,$A1,$FF,$01,$B7,$B7,$FF
+.byte $B5,$BD,$A1,$FF,$01,$B7,$B7,$00
 .byte $00,$22,$4C,$1F,$36,$3F,$5F,$17
 .byte $01,$63,$3F,$20,$2D,$29,$60,$EC
 .byte $FF,$7F,$36,$3F,$1F,$5C,$22,$00
