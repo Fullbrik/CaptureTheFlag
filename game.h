@@ -83,21 +83,28 @@ byte respawnCountdown;
 //The gamepad
 byte gamepad;
 
+#define GunCount 2
+
 //Gun values
-const byte GunSprites[] =
+const byte GunSprites[GunCount] =
 {
   0x00, 0xb9
 };
 
-const byte GunProjectileSprites[] =
+const byte GunProjectileSprites[GunCount] =
 {
   0x00, 0xb9
 };
 
-const byte GunDamages[] =
+const byte GunDamages[GunCount] =
 {
   0, 1
 };
+
+//Gun pickup location and type
+byte pickup_gunX;
+byte pickup_gunY;
+byte pickup_gunType;
 
 //Map constants
 #define MapCount 2
@@ -241,6 +248,9 @@ void update(void)
   //Render right when vblank starts
   oam_off = 0x00;
   
+  //Render the gun pickup if one is on the board
+  if(pickup_gunType != 0) oam_off = oam_spr(pickup_gunX, pickup_gunX
+  
   if(!(GameState&P1_DIED))
   {
     //Render player 1
@@ -253,8 +263,9 @@ void update(void)
   //Render his projectile if needed
   if(GameState&P1_SHOT) oam_off = oam_spr(DRAWX(p1x_proj), DRAWY(p1y_proj), GunProjectileSprites[p1gun], 0x00, oam_off);
   
-  //Render his flag if it is not picked up
-  if(!(GameState&P2_FLAG)) oam_off = oam_spr(DRAWX(p1x_flag), DRAWY(p1y_flag), 0xbb, 0x01, oam_off);
+  //Render his flag if it is not picked up, and if it is, render a spot for it to go on
+  if(!(GameState&P2_FLAG)) oam_off = oam_spr(DRAWX(p1x_flag), DRAWY(p1y_flag), 0xb1, 0x01, oam_off);
+  else oam_off = oam_spr(DRAWX(p1x_flag), DRAWY(p1y_flag), 0xb2, 0x01, oam_off);
   
   
   if(!(GameState&P2_DIED))
@@ -269,8 +280,9 @@ void update(void)
   //Render his projectile if needed
   if(GameState&P2_SHOT) oam_off = oam_spr(DRAWX(p2x_proj), DRAWY(p2y_proj), GunProjectileSprites[p2gun], 0x40, oam_off);
   
-  //Render his flag if it is not picked up
-  if(!(GameState&P1_FLAG)) oam_off = oam_spr(DRAWX(p2x_flag), DRAWY(p2y_flag), 0xbb, 0x02, oam_off);
+  //Render his flag if it is not picked up, and if it is, render a spot for it to go on
+  if(!(GameState&P1_FLAG)) oam_off = oam_spr(DRAWX(p2x_flag), DRAWY(p2y_flag), 0xb1, 0x42, oam_off);
+  else oam_off = oam_spr(DRAWX(p2x_flag), DRAWY(p2y_flag), 0xb2, 0x42, oam_off);
   
   
   

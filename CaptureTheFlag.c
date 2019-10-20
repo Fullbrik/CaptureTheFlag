@@ -88,7 +88,7 @@ void main(void)
   // enable rendering
   ppu_on_all();
   
-  //game();
+  game();
   
   WinScreen();
   
