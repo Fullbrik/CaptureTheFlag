@@ -106,6 +106,18 @@ byte pickup_gunX;
 byte pickup_gunY;
 byte pickup_gunType;
 
+//Simple macro to set gun pickup without having to load a function into memory
+#define SETGUNPICKUP(type, x, y) pickup_gunType = type; pickup_gunX = x; pickup_gunY = y
+
+//Simple macro to tell the game we picked up the gun
+#define PICKUPGUN(player) p ## player ## gun = pickup_gunType; SETGUNPICKUP(0, 0, rand())
+
+//The gun's x is also used to count down until the gun needs to respawn, so we rename it here
+#define pickup_gunRespawnCounter pickup_gunX
+
+//The amount of time until the gun needs to respawn is stored in the y
+#define pickup_gunRespawnTime pickup_gunY
+
 //Map constants
 #define MapCount 2
 #define MapXSize 19
@@ -220,13 +232,13 @@ void start(void)
   
   ppu_on_all();
   
+  SETGUNPICKUP(1, MapXSize / 2, MapYSize / 2);
+  
   //Setup player starting stats
   p1hp = p1maxHP;
   
   p1x = P1StartX;
   p1y = P1StartY;
-  
-  p1gun = 1;
   
   
   p2hp = p2maxHP;
@@ -234,22 +246,27 @@ void start(void)
   p2x = P2StartX;
   p2y = P2StartY;
   
-  p2gun = 1;
-  
   ppu_wait_frame();
 }
 
 void update(void)
 {
+  //Render right when vblank starts
   ppu_wait_frame();
   
   /*Rendering*/
   
-  //Render right when vblank starts
+  //Reset the oam_off
   oam_off = 0x00;
   
+  
+  
   //Render the gun pickup if one is on the board
-  if(pickup_gunType != 0) oam_off = oam_spr(pickup_gunX, pickup_gunX
+  if(pickup_gunType != 0) oam_off = oam_spr(DRAWX(pickup_gunX), DRAWY(pickup_gunX), GunSprites[pickup_gunType], 0x00, oam_off);
+  
+  
+  
+  
   
   if(!(GameState&P1_DIED))
   {
@@ -374,6 +391,11 @@ void update(void)
           SETGAMESTATETRUE(P1_FLAG);
         }
       }
+      
+      if(pickup_gunType && p1x == pickup_gunX && p1y == pickup_gunY)
+      {
+        PICKUPGUN(1);
+      }
     }
   }
   
@@ -444,6 +466,11 @@ void update(void)
           SETGAMESTATETRUE(P2_FLAG);
         }
       }
+      
+      if(pickup_gunType && p2x == pickup_gunX && p2y == pickup_gunY)
+      {
+        PICKUPGUN(2);
+      }
     }
   }
   
@@ -459,41 +486,51 @@ void update(void)
     //Start with p1
     if(GameState&P1_SHOT)
     {
+      ++p1x_proj;
+      
       //If we collided, stop the projectile
-      if(COLLIDING(p1x_proj + 1, p1y_proj))
-      {
-        SETGAMESTATEFALSE(P1_SHOT);
-      }
-      else if(p1x_proj == p2x && p1y_proj == p2y)
+      if(p1x_proj == p2x && p1y_proj == p2y)
       {
         SETGAMESTATEFALSE(P1_SHOT);
         
         DoDamageToP2(GunDamages[p1gun]);
       }
-      else
+      else if(COLLIDING(p1x_proj + 1, p1y_proj))
       {
-        ++p1x_proj;
+        SETGAMESTATEFALSE(P1_SHOT);
       }
     }
     
     //Then do p2
     if(GameState&P2_SHOT)
     {
+      --p2x_proj;
+      
       //If we collided, stop the projectile
-      if(COLLIDING(p2x_proj - 1, p2y_proj))
-      {
-        SETGAMESTATEFALSE(P2_SHOT);
-      }
-      else if(p2x_proj == p1x && p2y_proj == p1y)
+      if(p2x_proj == p1x && p2y_proj == p1y)
       {
         SETGAMESTATEFALSE(P2_SHOT);
         
         DoDamageToP1(GunDamages[p2gun]);
       }
-      else
+      else if(COLLIDING(p2x_proj - 1, p2y_proj))
       {
-        --p2x_proj;
+        SETGAMESTATEFALSE(P2_SHOT);
       }
+    }
+  }
+  
+  
+  
+  
+  /*Respawn the gun pickup*/
+  if(!pickup_gunType)
+  {
+    ++pickup_gunRespawnCounter;
+    
+    if(pickup_gunRespawnCounter >= pickup_gunRespawnTime)
+    {
+      SETGUNPICKUP(1, MapXSize / 2, MapYSize / 2);
     }
   }
   
