@@ -90,9 +90,19 @@ void main(void)
   // enable rendering
   ppu_on_all();
   
-  game();
-  
-  WinScreen();
-  
-  while(1);
+  while(1)
+  {
+    game();
+    
+    WinScreen();
+    
+    for(i = 0; i < 255; i++)
+    {
+      ppu_wait_frame();
+      
+      gamepad = pad_poll(0) | pad_poll(1);
+      
+      if(gamepad&PAD_START) break;
+    }
+  }
 }

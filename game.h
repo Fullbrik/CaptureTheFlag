@@ -161,7 +161,7 @@ void start(void)
   
   ppu_on_all();
   
-  SETGUNPICKUP(1, MapXSize / 2, MapYSize / 2);
+  SETGUNPICKUP(1, (MapXSize >> 1) - 1, MapYSize / 2);
   
   //Setup player starting stats
   p1hp = p1maxHP;
