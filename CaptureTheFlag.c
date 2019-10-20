@@ -25,8 +25,21 @@
 #include "apu.h"
 //#link "apu.c"
 
+//Used with for loops / temp variables
+byte i;
+byte j;
+
+//The gamepad
+byte gamepad;
+
+//The map that has been chosen
+byte map;
+
 
 #include "Maps.h"
+
+#include "mainMenu.h"
+
 #include "Guns.h"
 #include "game.h"
 
@@ -39,12 +52,12 @@
 const char PALETTE[32] = { 
   0x00,			// screen color
 
-  0x11,0x30,0x27,0x00,	// background palette 0
+  0x0F,0x30,0x30,0x00,	// background palette 0
   0x1C,0x20,0x2C,0x00,	// background palette 1
   0x00,0x10,0x20,0x00,	// background palette 2
   0x06,0x16,0x26,0x00,   // background palette 3
 
-  0x0F,0x2D,0x14,0x00,	// sprite palette 0
+  0x0F,0x2D,0x30,0x00,	// sprite palette 0
   0x0F,0x2D,0x16,0x00,	// sprite palette 1
   0x0F,0x2D,0x02,0x00,	// sprite palette 2
   0x0F,0x27,0x2A	// sprite palette 3
@@ -92,6 +105,18 @@ void main(void)
   
   while(1)
   {
+    ppu_off();
+    
+    oam_clear();
+    
+    pal_all(PALETTE);
+    
+    //MainMenu();
+    
+    map = 1;
+    
+    oam_clear();
+    
     game();
     
     WinScreen();

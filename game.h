@@ -66,8 +66,7 @@ const byte RespawnTime = 120;
 //byte representing how much time the player has been dead for
 byte respawnCountdown;
 
-//The gamepad
-byte gamepad;
+
 
 //Gun pickup location and type
 byte pickup_gunX;
@@ -91,13 +90,6 @@ byte pickup_gunType;
 
 //Check if position collides with map
 #define COLLIDING(x, y) (MAPTILE(x, y))
-
-//The map that has been chosen
-byte map;
-
-//Used with for loops / temp variables
-byte i;
-byte j;
 
 //Easy do damage to target
 void DoDamageToP1(byte damage)
@@ -148,8 +140,6 @@ void start(void)
   //Draw board
   ppu_off();
   
-  map = 0x00;
-  
   for(i = 0x00; i < MapXSize; i++)
   {
     for(j = 0; j < MapYSize; j++)
@@ -169,13 +159,15 @@ void start(void)
   p1x = P1StartX;
   p1y = P1StartY;
   
+  p1gun = 0;
+  
   
   p2hp = p2maxHP;
   
   p2x = P2StartX;
   p2y = P2StartY;
   
-  ppu_wait_frame();
+  p2gun = 0;
 }
 
 void update(void)
@@ -461,8 +453,8 @@ void update(void)
     
     if(pickup_gunRespawnCounter >= pickup_gunRespawnTime)
     {
-      pickup_gunX = (rand() % 6) + (MapXSize / 2);
-      pickup_gunY = (rand() % 6) + (MapYSize / 2);
+      pickup_gunX = MapXSize / 2;
+      pickup_gunY = MapYSize / 2;
       
       pickup_gunType = 1;
     }
