@@ -111,9 +111,7 @@ void main(void)
     
     pal_all(PALETTE);
     
-    //MainMenu();
-    
-    map = 1;
+    MainMenu();
     
     oam_clear();
     

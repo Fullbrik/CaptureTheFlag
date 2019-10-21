@@ -453,7 +453,7 @@ void update(void)
     
     if(pickup_gunRespawnCounter >= pickup_gunRespawnTime)
     {
-      pickup_gunX = MapXSize / 2;
+      pickup_gunX = MapXSize / 2 - (rand() % 2);
       pickup_gunY = MapYSize / 2;
       
       pickup_gunType = 1;

@@ -124,7 +124,7 @@ const byte Maps[MapCount][MapXSize][MapYSize] =
 //The names of the maps, separated by \0
 const char MapNames[] =
 {
-  "\0Quimp\0Loop\0Naip"
+  "\0Quimp\0Doip\0Naip"
 };
 
 //The icons of the maps, two for each map
