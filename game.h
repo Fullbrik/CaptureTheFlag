@@ -22,9 +22,11 @@ byte GameState;
 
 //Player variables
 
+//Max health for a player
+#define MAXHP 9
+
 //p1
 //health
-const byte p1maxHP = 1;
 sbyte p1hp;
 
 //location
@@ -42,7 +44,6 @@ byte p1y_proj;
 
 //p2
 //health
-const byte p2maxHP = 1;
 sbyte p2hp;
 
 //location
@@ -72,6 +73,9 @@ byte respawnCountdown;
 byte pickup_gunX;
 byte pickup_gunY;
 byte pickup_gunType;
+
+//The next gun type to set the pickup to be
+byte nextGunType;
 
 //Simple macro to set gun pickup without having to load a function into memory
 #define SETGUNPICKUP(type, x, y) pickup_gunType = type; pickup_gunX = x; pickup_gunY = y
@@ -140,21 +144,27 @@ void start(void)
   //Draw board
   ppu_off();
   
-  for(i = 0x00; i < MapXSize; i++)
+  for(i = 0x00; i < MapXSize; ++i)
   {
-    for(j = 0; j < MapYSize; j++)
+    for(j = 0; j < MapYSize; ++j)
     {
       vram_adr(NTADR_A(i + 1, j + 1));
       vram_put(Maps[map][i][j]);
     }
   }
   
+  vram_adr(NTADR_A(3, 1));
+  vram_write("Red Health: ", 12);
+  
+  vram_adr(NTADR_A(16, 1));
+  vram_write("Blue Health: ", 13);
+  
   ppu_on_all();
   
   SETGUNPICKUP(1, (MapXSize >> 1) - 1, MapYSize / 2);
   
   //Setup player starting stats
-  p1hp = p1maxHP;
+  p1hp = MAXHP;
   
   p1x = P1StartX;
   p1y = P1StartY;
@@ -162,12 +172,17 @@ void start(void)
   p1gun = 0;
   
   
-  p2hp = p2maxHP;
+  p2hp = MAXHP;
   
   p2x = P2StartX;
   p2y = P2StartY;
   
   p2gun = 0;
+  
+  
+  
+  
+  nextGunType = 1;
 }
 
 void update(void)
@@ -193,10 +208,20 @@ void update(void)
   {
     //Render player 1
     oam_off = oam_spr(DRAWX(p1x), DRAWY(p1y), 0xb0, 0x01, oam_off);
+    
   
-    //Render his gun
-    oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
+    //Render his gun, or his knive
+    gamepad = pad_poll(0);
+    
+    if(gamepad&PAD_B)
+      oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), 0xc0, 0x00, oam_off);
+    else 
+      oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
   }
+  
+  //Render his health
+  oam_off = oam_spr(DRAWX(13), DRAWY(0), NumSprites[p1hp], 0x00, oam_off);
+  
   
   //Render his projectile if needed
   if(GameState&P1_SHOT) oam_off = oam_spr(DRAWX(p1x_proj), DRAWY(p1y_proj), GunProjectileSprites[p1gun], 0x00, oam_off);
@@ -206,14 +231,26 @@ void update(void)
   else oam_off = oam_spr(DRAWX(p1x_flag), DRAWY(p1y_flag), 0xb2, 0x01, oam_off);
   
   
+  
+  
+  
   if(!(GameState&P2_DIED))
   {
     //Render player 2
     oam_off = oam_spr(((p2x + 1) * 8), ((p2y + 1) * 8) - 1, 0xb0, 0x42, oam_off);
+    
   
-    //Render his gun
-    oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
+    //Render his gun, or his knive
+    gamepad = pad_poll(1);
+    
+    if(gamepad&PAD_B)
+      oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, 0xc0, 0x40, oam_off);
+    else
+      oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
   }
+  
+  //Render his health
+  oam_off = oam_spr(DRAWX(27), DRAWY(0), NumSprites[p2hp], 0x00, oam_off);
   
   //Render his projectile if needed
   if(GameState&P2_SHOT) oam_off = oam_spr(DRAWX(p2x_proj), DRAWY(p2y_proj), GunProjectileSprites[p2gun], 0x40, oam_off);
@@ -259,13 +296,15 @@ void update(void)
       p1y = P1StartY;
       
       SETGAMESTATEFALSE(P1_DIED);
+      
+      p1hp = MAXHP;
     }
   }
   else
   {
     gamepad = pad_poll(0);
   
-    if(gamepad&PAD_A && p1gun && !(GameState&P1_SHOT))
+    if(gamepad&PAD_A && !(gamepad&PAD_B) && p1gun && !(GameState&P1_SHOT))
     {
       p1x_proj = p1x + 2;
       p1y_proj = p1y;
@@ -273,7 +312,7 @@ void update(void)
       SETGAMESTATETRUE(P1_SHOT);
     }
   
-    if(currentFrame == 3 || currentFrame == 6)
+    if(!(currentFrame % 3))
     {
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
@@ -287,7 +326,7 @@ void update(void)
     }
   
     //We will only move every 6 frames, this way we slow down movement
-    if(currentFrame == 6)
+    if(!(currentFrame % 6))
     {
       //Move p1
       if(gamepad&PAD_UP && !COLLIDING(p1x, p1y - 1) && !(p1x == p2x && p1y - 1 == p2y)) --p1y;
@@ -337,13 +376,15 @@ void update(void)
       p2y = P2StartY;
       
       SETGAMESTATEFALSE(P2_DIED);
+      
+      p2hp = MAXHP;
     }
   }
   else
   {
     gamepad = pad_poll(1);
   
-    if(gamepad&PAD_A && p2gun && !((GameState&P2_SHOT) >> 4))
+    if(gamepad&PAD_A && !(gamepad&PAD_B) && p2gun && !((GameState&P2_SHOT) >> 4))
     {
       p2x_proj = p2x - 2;
       p2y_proj = p2y;
@@ -351,7 +392,7 @@ void update(void)
       SETGAMESTATETRUE(P2_SHOT);
     }
   
-    if(currentFrame == 3 || currentFrame == 6)
+    if(!(currentFrame % 3))
     {
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
@@ -365,7 +406,7 @@ void update(void)
     }
   
     //We will only move every 6 frames, this way we slow down movement
-    if(currentFrame == 6)
+    if(!(currentFrame % 6))
     {
       //Move p2
       if(gamepad&PAD_UP && !COLLIDING(p2x, p2y - 1) && !(p2x == p1x && p2y - 1 == p1y)) --p2y;
@@ -403,7 +444,7 @@ void update(void)
   
   
   /*Move the projectiles*/
-  if(currentFrame == 5)
+  if(!(currentFrame % GunSpeeds[p1gun]))
   {
     
     //Start with p1
@@ -423,7 +464,10 @@ void update(void)
         SETGAMESTATEFALSE(P1_SHOT);
       }
     }
-    
+  }
+  
+  if(!(currentFrame % GunSpeeds[p2gun]))
+  {
     //Then do p2
     if(GameState&P2_SHOT)
     {
@@ -456,15 +500,13 @@ void update(void)
       pickup_gunX = MapXSize / 2 - (rand() % 2);
       pickup_gunY = MapYSize / 2;
       
-      pickup_gunType = 1;
+      ++nextGunType;
+      
+      if(nextGunType >= GunCount)
+        nextGunType = 0;
+      
+      pickup_gunType = nextGunType;
     }
-  }
-  
-  
-  //Reset current frame when the max is hit
-  if(currentFrame == 6)
-  {
-    currentFrame = 0;
   }
   
 }
