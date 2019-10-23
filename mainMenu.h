@@ -65,8 +65,6 @@ void MainMenu(void)
 {
   DrawMainMenu();
   
-  gamepad = 0;
-  
   while(1)
   {
     ppu_wait_frame();
@@ -86,6 +84,6 @@ void MainMenu(void)
     
     if(map >= MapCount) map = 0;
     
-    if(gamepad&PAD_START) break;
+    if(gamepad&PAD_START && !(PrevPad&PAD_START)) break;
   }
 }
