@@ -336,10 +336,10 @@ void update(void)
   
       if(gamepad&PAD_LEFT && !COLLIDING(p1x - 1, p1y) && !(p1x - 1 == p2x && p1y == p2y)) --p1x;
       
-      //See if we have the opponents flag. If we do and are standing on the cap location, cap the flag
+      //See if we have the opponents flag. If we do and are standing on the cap location, and the opponent doesn't have our flag, cap the flag
       if(GameState&P1_FLAG)
       {
-        if(p1x == p1x_flag && p1y == p1y_flag)
+        if(p1x == p1x_flag && p1y == p1y_flag && !(GameState&P2_FLAG))
         {
           SETGAMESTATEFALSE(P1_FLAG);
           SETGAMESTATETRUE(P1_CAPD);
@@ -417,7 +417,7 @@ void update(void)
       
       if(GameState&P2_FLAG)
       {
-        if(p2x == p2x_flag && p2y == p2y_flag)
+        if(p2x == p2x_flag && p2y == p2y_flag && !(GameState&P1_FLAG))
         {
           SETGAMESTATEFALSE(P2_FLAG);
           SETGAMESTATETRUE(P2_CAPD);
