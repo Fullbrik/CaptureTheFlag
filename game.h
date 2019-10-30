@@ -329,7 +329,7 @@ void update(void)
     }
   
     //We will only move every 6 frames, this way we slow down movement
-    if(!(currentFrame % 6))
+    if(!(currentFrame % GunSpeedMod[p1gun]))
     {
       //Move p1
       if(gamepad&PAD_UP && !COLLIDING(p1x, p1y - 1) && !(p1x == p2x && p1y - 1 == p2y)) --p1y;
@@ -409,7 +409,7 @@ void update(void)
     }
   
     //We will only move every 6 frames, this way we slow down movement
-    if(!(currentFrame % 6))
+    if(!(currentFrame % GunSpeedMod[p2gun]))
     {
       //Move p2
       if(gamepad&PAD_UP && !COLLIDING(p2x, p2y - 1) && !(p2x == p1x && p2y - 1 == p1y)) --p2y;
