@@ -33,6 +33,10 @@ const byte MainMenuScreen[] =
 
 void DrawMainMenu(void)
 {  
+  vram_adr(NTADR_A(0, 1));
+  
+  vram_put(0x01);
+  
   vram_adr(NTADR_A(1, 1));
   
   vram_write(MainMenuScreen, sizeof(MainMenuScreen));

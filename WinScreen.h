@@ -114,6 +114,9 @@ void WinScreen(void)
   
   pal_all(WINSCREENPALLETE);
   
+  vram_adr(NTADR_A(0, 1));
+  vram_put(1);
+  
   vram_adr(NTADR_A(1, 1));
   
   if(GameState&P2_CAPD) vram_write(Blue, sizeof(Blue));

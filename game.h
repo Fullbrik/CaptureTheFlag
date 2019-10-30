@@ -144,6 +144,9 @@ void start(void)
   //Draw board
   ppu_off();
   
+  vram_adr(NTADR_A(0, 1));
+  vram_put(1);
+  
   for(i = 0x00; i < MapXSize; ++i)
   {
     for(j = 0; j < MapYSize; ++j)
