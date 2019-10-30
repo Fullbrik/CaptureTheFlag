@@ -315,7 +315,7 @@ void update(void)
       SETGAMESTATETRUE(P1_SHOT);
     }
   
-    if(!(currentFrame % 3))
+    if(!(currentFrame % 4))
     {
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
@@ -323,7 +323,7 @@ void update(void)
         //Make sure the opponent is in front of us
         if(p2y == p1y && p2x == p1x + 1)
         {
-          DoDamageToP2(1);
+          DoDamageToP2(3);
         }
       }
     }
@@ -395,7 +395,7 @@ void update(void)
       SETGAMESTATETRUE(P2_SHOT);
     }
   
-    if(!(currentFrame % 3))
+    if(!(currentFrame % 4))
     {
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
@@ -403,7 +403,7 @@ void update(void)
         //Make sure the opponent is in front of us
         if(p1y == p2y && p1x == p2x - 1)
         {
-          DoDamageToP1(1);
+          DoDamageToP1(3);
         }
       }
     }
