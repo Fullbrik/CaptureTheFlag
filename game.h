@@ -156,6 +156,11 @@ void start(void)
     }
   }
   
+  for(i = 0; i < 31; i++)
+  {
+    vram_put(1);
+  }
+  
   vram_adr(NTADR_A(3, 1));
   vram_write("Red Health: ", 12);
   
@@ -309,7 +314,7 @@ void update(void)
   
     if(gamepad&PAD_A && !(gamepad&PAD_B) && p1gun && !(GameState&P1_SHOT))
     {
-      p1x_proj = p1x + 2;
+      p1x_proj = p1x + 1;
       p1y_proj = p1y;
     
       SETGAMESTATETRUE(P1_SHOT);
@@ -389,7 +394,7 @@ void update(void)
   
     if(gamepad&PAD_A && !(gamepad&PAD_B) && p2gun && !((GameState&P2_SHOT) >> 4))
     {
-      p2x_proj = p2x - 2;
+      p2x_proj = p2x - 1;
       p2y_proj = p2y;
     
       SETGAMESTATETRUE(P2_SHOT);
@@ -447,13 +452,13 @@ void update(void)
   
   
   /*Move the projectiles*/
-  if(GunSpeeds[p1gun] && !(currentFrame % GunSpeeds[p1gun]))
   {
     
     //Start with p1
     if(GameState&P1_SHOT)
     {
-      ++p1x_proj;
+      if(GunSpeeds[p1gun] && !(currentFrame % GunSpeeds[p1gun]))
+      	++p1x_proj;
       
       //If we collided, stop the projectile
       if(p1x_proj == p2x && p1y_proj == p2y)
@@ -469,12 +474,13 @@ void update(void)
     }
   }
   
-  if(GunSpeeds[p2gun] && !(currentFrame % GunSpeeds[p2gun]))
+  
   {
     //Then do p2
     if(GameState&P2_SHOT)
     {
-      --p2x_proj;
+      if(GunSpeeds[p2gun] && !(currentFrame % GunSpeeds[p2gun]))
+      	--p2x_proj;
       
       //If we collided, stop the projectile
       if(p2x_proj == p1x && p2y_proj == p1y)
