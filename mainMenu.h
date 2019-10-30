@@ -41,6 +41,11 @@ void DrawMainMenu(void)
   
   vram_write(MainMenuScreen, sizeof(MainMenuScreen));
   
+  for(i = 0; i < 31; i++)
+  {
+    vram_put(1);
+  }
+  
   vram_adr(NTADR_A(10, 14));
   vram_write("Select a map", 12);
   
@@ -61,6 +66,8 @@ void DrawMainMenu(void)
       vram_put(MapNames[i]);
     }
   }
+  
+  
   
   ppu_on_all();
 }
