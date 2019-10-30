@@ -447,7 +447,7 @@ void update(void)
   
   
   /*Move the projectiles*/
-  if(!(currentFrame % GunSpeeds[p1gun]))
+  if(GunSpeeds[p1gun] && !(currentFrame % GunSpeeds[p1gun]))
   {
     
     //Start with p1
@@ -469,7 +469,7 @@ void update(void)
     }
   }
   
-  if(!(currentFrame % GunSpeeds[p2gun]))
+  if(GunSpeeds[p2gun] && !(currentFrame % GunSpeeds[p2gun]))
   {
     //Then do p2
     if(GameState&P2_SHOT)
