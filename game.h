@@ -142,7 +142,7 @@ void start(void)
   //Nothing happened in the the game yet, so let's tell the code that
   GameState = 0;
   
-  map = 3;
+  //map = 3;
   
   //Draw board
   ppu_off();

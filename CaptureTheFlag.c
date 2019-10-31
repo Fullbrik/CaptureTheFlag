@@ -112,7 +112,7 @@ void main(void)
     
     pal_all(PALETTE);
     
-    //MainMenu();
+    MainMenu();
     
     oam_clear();
     
