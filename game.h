@@ -228,6 +228,9 @@ void update(void)
       oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), 0xc0, 0x00, oam_off);
     else 
       oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
+    
+    //Render a flag above his head if he has it
+    if(GameState&P1_FLAG) oam_off = oam_spr(DRAWX(p1x), DRAWY(p1y - 1), 0xb1, 0x42, oam_off);
   }
   
   //Render his health
@@ -258,6 +261,9 @@ void update(void)
       oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, 0xc0, 0x40, oam_off);
     else
       oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
+    
+    //Render a flag above his head if he has it
+    if(GameState&P2_FLAG) oam_off = oam_spr(DRAWX(p2x), DRAWY(p2y - 1), 0xb1, 0x01, oam_off);
   }
   
   //Render his health
