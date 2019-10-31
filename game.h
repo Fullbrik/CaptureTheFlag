@@ -33,6 +33,8 @@ sbyte p1hp;
 byte p1x;
 byte p1y;
 
+//Direction
+
 //gun
 byte p1gun;
 
@@ -56,7 +58,6 @@ byte p2gun;
 //projectile location
 byte p2x_proj;
 byte p2y_proj;
-
 
 //byte representing the current frame
 byte currentFrame;
@@ -459,9 +460,6 @@ void update(void)
     //Start with p1
     if(GameState&P1_SHOT)
     {
-      if(GunSpeeds[p1gun] && !(currentFrame % GunSpeeds[p1gun]))
-      	++p1x_proj;
-      
       //If we collided, stop the projectile
       if(p1x_proj == p2x && p1y_proj == p2y)
       {
@@ -469,10 +467,13 @@ void update(void)
         
         DoDamageToP2(GunDamages[p1gun]);
       }
-      else if(COLLIDING(p1x_proj + 1, p1y_proj))
+      else if(COLLIDING(p1x_proj, p1y_proj))
       {
         SETGAMESTATEFALSE(P1_SHOT);
       }
+      
+      if(GunSpeeds[p1gun] && !(currentFrame % GunSpeeds[p1gun]))
+      	++p1x_proj;
     }
   }
   
@@ -481,9 +482,6 @@ void update(void)
     //Then do p2
     if(GameState&P2_SHOT)
     {
-      if(GunSpeeds[p2gun] && !(currentFrame % GunSpeeds[p2gun]))
-      	--p2x_proj;
-      
       //If we collided, stop the projectile
       if(p2x_proj == p1x && p2y_proj == p1y)
       {
@@ -491,10 +489,13 @@ void update(void)
         
         DoDamageToP1(GunDamages[p2gun]);
       }
-      else if(COLLIDING(p2x_proj - 1, p2y_proj))
+      else if(COLLIDING(p2x_proj, p2y_proj))
       {
         SETGAMESTATEFALSE(P2_SHOT);
       }
+      
+      if(GunSpeeds[p2gun] && !(currentFrame % GunSpeeds[p2gun]))
+      	--p2x_proj;
     }
   }
   
