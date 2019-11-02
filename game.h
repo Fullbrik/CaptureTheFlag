@@ -23,7 +23,7 @@ byte GameState;
 //Player variables
 
 //Max health for a player
-#define MAXHP 9
+const byte MAXHP = 9;
 
 //p1
 //health
