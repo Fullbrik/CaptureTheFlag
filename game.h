@@ -25,6 +25,9 @@ byte GameState;
 //Max health for a player
 const byte MAXHP = 9;
 
+//Max capp count for player
+byte maxCapCount;
+
 //p1
 //health
 sbyte p1hp;
@@ -42,6 +45,9 @@ byte p1gun;
 byte p1x_proj;
 byte p1y_proj;
 
+//The amount of times capped
+byte p1capCount;
+
 
 
 //p2
@@ -58,6 +64,12 @@ byte p2gun;
 //projectile location
 byte p2x_proj;
 byte p2y_proj;
+
+//The amount of times capped
+byte p2capCount;
+
+
+
 
 //byte representing the current frame
 byte currentFrame;
@@ -141,6 +153,8 @@ void start(void)
 {
   //Nothing happened in the the game yet, so let's tell the code that
   GameState = 0;
+  
+  maxCapCount = 1;
   
   //map = 3;
   
@@ -325,7 +339,7 @@ void update(void)
     {
       p1x_proj = p1x + 1;
       p1y_proj = p1y;
-    
+      
       SETGAMESTATETRUE(P1_SHOT);
     }
   
@@ -359,7 +373,11 @@ void update(void)
         if(p1x == p1x_flag && p1y == p1y_flag && !(GameState&P2_FLAG))
         {
           SETGAMESTATEFALSE(P1_FLAG);
-          SETGAMESTATETRUE(P1_CAPD);
+          
+          ++p1capCount;
+      
+          if(p1capCount >= maxCapCount)
+            SETGAMESTATETRUE(P1_CAPD);
         }
       }
       else
@@ -437,7 +455,11 @@ void update(void)
         if(p2x == p2x_flag && p2y == p2y_flag && !(GameState&P1_FLAG))
         {
           SETGAMESTATEFALSE(P2_FLAG);
-          SETGAMESTATETRUE(P2_CAPD);
+          
+          ++p2capCount;
+      
+          if(p2capCount >= maxCapCount)
+            SETGAMESTATETRUE(P2_CAPD);
         }
       }
       else
