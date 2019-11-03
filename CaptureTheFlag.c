@@ -53,7 +53,7 @@ byte map;
 const char PALETTE[32] = { 
   0x00,			// screen color
 
-  0x11,0x30,0x16,0x00,	// background palette 0
+  0x0F,0x30,0x0F,0x00,	// background palette 0
   0x11,0x30,0x16,0x00,	// background palette 1
   0x00,0x10,0x20,0x00,	// background palette 2
   0x06,0x16,0x26,0x00,   // background palette 3
@@ -107,6 +107,8 @@ void main(void)
   while(1)
   {
     ppu_off();
+    
+    pal_all(PALETTE);
     
     oam_clear();
     
