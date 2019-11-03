@@ -103,6 +103,14 @@ void main(void)
   apu_init();
   
   setup_graphics();
+  
+  vram_adr(NTADR_A(0, 0));
+  
+  for(i = 0; i < 50; i++)
+  {
+    vram_put(1);
+  }
+  
   // enable rendering
   ppu_on_all();
   
@@ -114,7 +122,7 @@ void main(void)
     
     oam_clear();
     
-    //MainMenu();
+    MainMenu();
     
     oam_clear();
     
