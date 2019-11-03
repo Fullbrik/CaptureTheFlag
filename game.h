@@ -176,11 +176,11 @@ void start(void)
     vram_put(1);
   }
   
-  vram_adr(NTADR_A(3, 1));
-  vram_write("Red Health: ", 12);
+  vram_adr(NTADR_A(1, 1));
+  vram_write("Red HP:  Cap: ", 14);
   
   vram_adr(NTADR_A(16, 1));
-  vram_write("Blue Health: ", 13);
+  vram_write("Blue HP:  Cap: ", 15);
   
   ppu_on_all();
   
@@ -250,7 +250,10 @@ void update(void)
   }
   
   //Render his health
-  oam_off = oam_spr(DRAWX(13), DRAWY(0), NumSprites[p1hp], 0x01, oam_off);
+  oam_off = oam_spr(DRAWX(7), DRAWY(0), NumSprites[p1hp], 0x01, oam_off);
+  
+  //Render his cap count
+  oam_off = oam_spr(DRAWX(13), DRAWY(0), NumSprites[p1capCount], 0x01, oam_off);
   
   
   //Render his projectile if needed
@@ -283,7 +286,10 @@ void update(void)
   }
   
   //Render his health
-  oam_off = oam_spr(DRAWX(27), DRAWY(0), NumSprites[p2hp], 0x02, oam_off);
+  oam_off = oam_spr(DRAWX(23), DRAWY(0), NumSprites[p2hp], 0x02, oam_off);
+  
+  //Render his cap count
+  oam_off = oam_spr(DRAWX(29), DRAWY(0), NumSprites[p2capCount], 0x02, oam_off);
   
   //Render his projectile if needed
   if(GameState&P2_SHOT) oam_off = oam_spr(DRAWX(p2x_proj), DRAWY(p2y_proj), GunProjectileSprites[p2gun], 0x40, oam_off);

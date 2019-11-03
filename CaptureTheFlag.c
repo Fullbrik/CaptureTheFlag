@@ -114,7 +114,7 @@ void main(void)
     
     oam_clear();
     
-    MainMenu();
+    //MainMenu();
     
     oam_clear();
     
