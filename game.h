@@ -154,8 +154,6 @@ void start(void)
   //Nothing happened in the the game yet, so let's tell the code that
   GameState = 0;
   
-  maxCapCount = 1;
-  
   //map = 3;
   
   //Draw board
@@ -196,6 +194,8 @@ void start(void)
   
   p1gun = 0;
   
+  p1capCount = 0;
+  
   
   p2hp = MAXHP;
   
@@ -203,6 +203,8 @@ void start(void)
   p2y = P2StartY;
   
   p2gun = 0;
+  
+  p2capCount = 0;
   
   
   

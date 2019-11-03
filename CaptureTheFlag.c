@@ -38,11 +38,13 @@ byte map;
 
 #include "Maps.h"
 
-#include "mainMenu.h"
+
 
 #include "Guns.h"
 #include "NumSprites.h"
 #include "game.h"
+
+#include "mainMenu.h"
 
 
 #include "WinScreen.h"
@@ -61,7 +63,7 @@ const char PALETTE[32] = {
   0x0F,0x2D,0x30,0x00,	// sprite palette 0
   0x0F,0x2D,0x16,0x00,	// sprite palette 1
   0x0F,0x2D,0x02,0x00,	// sprite palette 2
-  0x0F,0x27,0x2A	// sprite palette 3
+  0x0F,0x30,0x0F	// sprite palette 3
 };
 
 // setup PPU and tables

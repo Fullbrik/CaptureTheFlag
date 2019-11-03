@@ -72,6 +72,39 @@ void DrawMainMenu(void)
   ppu_on_all();
 }
 
+void DrawCapSelectScreen(void)
+{
+  oam_clear();
+  
+  ppu_off();
+  
+  j = 0;
+  
+  for(i = 0; i < sizeof(MapNames); i++)
+  {
+    if(MapNames[i] == '\0')
+    {
+      ++j;
+      
+      if(j > MapCount) break;
+      
+      vram_adr(NTADR_A(12, 15 + (j * 2)));
+    }
+    else
+    {
+      vram_put(0x00);
+    }
+  }
+  
+  vram_adr(NTADR_A(8, 14));
+  vram_write("Select a cap amount", 19);
+  
+  vram_adr(NTADR_A(8, 17));
+  vram_write("Current value:", 14);
+  
+  ppu_on_all();
+}
+
 void MainMenu(void)
 {
   DrawMainMenu();
@@ -94,6 +127,32 @@ void MainMenu(void)
     if(gamepad&PAD_SELECT && !(PrevPad&PAD_SELECT)) ++map;
     
     if(map >= MapCount) map = 0;
+    
+    if(gamepad&PAD_START && !(PrevPad&PAD_START)) break;
+  }
+  
+  maxCapCount = 1;
+  
+  DrawCapSelectScreen();
+  
+  while(1)
+  {
+    ppu_wait_frame();
+    
+    oam_off = 0;
+    
+    oam_off = oam_spr(DRAWX(23), DRAWY(16), NumSprites[maxCapCount], 0x03, oam_off);
+    
+    if(oam_off != 0) oam_hide_rest(oam_off);
+    
+    
+    PrevPad = gamepad;
+    
+    gamepad = pad_poll(0) | pad_poll(1);
+    
+    if(gamepad&PAD_SELECT && !(PrevPad&PAD_SELECT)) ++maxCapCount;
+    
+    if(maxCapCount > 9) maxCapCount = 1;
     
     if(gamepad&PAD_START && !(PrevPad&PAD_START)) break;
   }
