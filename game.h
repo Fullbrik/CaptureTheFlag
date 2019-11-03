@@ -241,7 +241,10 @@ void update(void)
     gamepad = pad_poll(0);
     
     if(gamepad&PAD_B)
+    {
       oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), 0xc0, 0x00, oam_off);
+      oam_off = oam_spr(DRAWX(p1x - 1), DRAWY(p1y), 0xc0, 0x40, oam_off);
+    }
     else 
       oam_off = oam_spr(DRAWX(p1x + 1), DRAWY(p1y), GunSprites[p1gun], 0x00, oam_off);
     
@@ -277,7 +280,10 @@ void update(void)
     gamepad = pad_poll(1);
     
     if(gamepad&PAD_B)
-      oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, 0xc0, 0x40, oam_off);
+    {
+      oam_off = oam_spr(DRAWX(p2x + 1), DRAWY(p2y), 0xc0, 0x00, oam_off);
+      oam_off = oam_spr(DRAWX(p2x - 1), DRAWY(p2y), 0xc0, 0x40, oam_off);
+    }
     else
       oam_off = oam_spr(((p2x) * 8), ((p2y + 1) * 8) - 1, GunSprites[p2gun], 0x40, oam_off);
     
@@ -356,8 +362,8 @@ void update(void)
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
       {
-        //Make sure the opponent is in front of us
-        if(p2y == p1y && p2x == p1x + 1)
+        //Make sure the opponent is in front or behind of us
+        if(p2y == p1y && (p2x == p1x + 1 || p2x == p1x - 1))
         {
           DoDamageToP2(1);
         }
@@ -440,8 +446,8 @@ void update(void)
       //Do a Mele attack if we are close enough
       if(gamepad&PAD_B)
       {
-        //Make sure the opponent is in front of us
-        if(p1y == p2y && p1x == p2x - 1)
+        //Make sure the opponent is in front or behind of us
+        if(p1y == p2y && (p1x == p2x + 1 || p1x == p2x - 1))
         {
           DoDamageToP1(1);
         }
