@@ -42,6 +42,11 @@ byte map;
 
 #include "Guns.h"
 #include "NumSprites.h"
+
+#include "PlayerStats.h"
+
+#include "PlayerAI.h"
+
 #include "game.h"
 
 #include "mainMenu.h"
