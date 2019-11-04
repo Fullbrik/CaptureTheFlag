@@ -4,28 +4,6 @@ byte AIState;
 
 #define AI_ENABLED  0x01
 
-
-//The AI's current goal
-byte GoalX, GoalY;
-
-//The set of moves to get to that goal
-byte currentMove;
-byte Moves[];
-
-byte InvalidLocationsX[];
-byte InvalidLocationsY[];
-
-void SetGoal(byte x, byte y)
-{
-  GoalX = x;
-  GoalY = y;
-  
-  //Reset the currrent goal
-  currentMove = 0;
-  
-  //Pathfind to that goal
-}
-
 byte AI_GetInput(void)
 {
   return 0;
