@@ -19,7 +19,7 @@ const byte GunDamages[GunCount] =
 
 const byte GunSpeeds[GunCount] =
 {
-  0, 1, 5, 3, 3, 10, 2
+  0, 1, 5, 3, 3, 9, 2
 };
 
 const byte GunSpeedMod[GunCount] =
